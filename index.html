@@ -29,6 +29,7 @@
       text-align: center;
       color: #0a7032;
       margin-bottom: 1rem;
+      line-height: 1.4;
     }
 
     label {
@@ -68,6 +69,10 @@
 
     .result div {
       margin: 0.3rem 0;
+    }
+
+    .result strong {
+      color: #0a7032;
     }
 
     .footer {
@@ -111,6 +116,7 @@
       const gstRate = 0.10;
       const gstAmount = includeGST ? baseCommission * gstRate : 0;
       const totalCommission = baseCommission + gstAmount;
+      const sellerReceives = salePrice - totalCommission;
 
       return {
         salePrice: salePrice.toFixed(2),
@@ -118,7 +124,8 @@
         baseCommission: baseCommission.toFixed(2),
         gstIncluded: includeGST,
         gstAmount: gstAmount.toFixed(2),
-        totalCommission: totalCommission.toFixed(2)
+        totalCommission: totalCommission.toFixed(2),
+        sellerReceives: sellerReceives.toFixed(2)
       };
     }
 
@@ -140,7 +147,9 @@
         <div><strong>Commission Rate:</strong> ${result.commissionRate}%</div>
         <div><strong>Base Commission:</strong> $${result.baseCommission}</div>
         <div><strong>GST (${result.gstIncluded ? 'Included' : 'Excluded'}):</strong> $${result.gstAmount}</div>
+        <hr>
         <div><strong>Total Commission:</strong> $${result.totalCommission}</div>
+        <div><strong>Seller Receives:</strong> $${result.sellerReceives}</div>
       `;
     }
   </script>
