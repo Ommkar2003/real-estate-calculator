@@ -1,115 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Real Estate Commission Calculator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Green Field Real Estate Commission Calculator</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
     body {
-      font-family: "Poppins", Arial, sans-serif;
-      background: #f9fafc;
-      margin: 0;
-      padding: 0;
+      font-family: "Poppins", sans-serif;
+      background: #f9fafb;
+      color: #333;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
+      margin: 0;
     }
+
     .calculator {
       background: #fff;
+      padding: 2rem;
       border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      padding: 30px 25px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       width: 100%;
       max-width: 420px;
+    }
+
+    h2 {
       text-align: center;
+      color: #0a7032;
+      margin-bottom: 1rem;
     }
-    .calculator h2 {
-      color: #004aad;
-      margin-bottom: 25px;
-      font-size: 22px;
-    }
+
     label {
       display: block;
-      text-align: left;
-      margin-bottom: 5px;
-      color: #333;
+      margin: 0.75rem 0 0.25rem;
       font-weight: 500;
     }
-    input {
+
+    input, select, button {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 18px;
+      padding: 0.6rem;
+      border-radius: 8px;
       border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 15px;
+      font-size: 1rem;
     }
+
     button {
-      width: 100%;
-      padding: 12px;
-      background-color: #004aad;
+      background: #0a7032;
       color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: 600;
+      margin-top: 1rem;
       cursor: pointer;
-      transition: 0.3s;
+      border: none;
+      transition: background 0.3s;
     }
+
     button:hover {
-      background-color: #003a8c;
+      background: #085a28;
     }
-    #result {
-      margin-top: 20px;
-      font-size: 18px;
-      font-weight: 600;
-      color: #333;
+
+    .result {
+      margin-top: 1.5rem;
+      background: #f3fef6;
+      border: 1px solid #c5e8ce;
+      padding: 1rem;
+      border-radius: 8px;
     }
-    footer {
+
+    .result div {
+      margin: 0.3rem 0;
+    }
+
+    .footer {
       text-align: center;
-      margin-top: 30px;
+      margin-top: 1rem;
+      font-size: 0.9rem;
       color: #777;
-      font-size: 13px;
     }
   </style>
 </head>
 <body>
   <div class="calculator">
-    <h2>Real Estate Commission Calculator</h2>
+    <h2>Green Field Real Estate<br>Commission Calculator</h2>
 
-    <label for="price">Property Price (₹):</label>
-    <input type="number" id="price" placeholder="Enter property price" />
+    <label for="salePrice">Property Sale Price ($):</label>
+    <input type="number" id="salePrice" placeholder="Enter sale price">
 
-    <label for="rate">Commission Rate (%):</label>
-    <input type="number" id="rate" placeholder="Enter commission rate" />
+    <label for="commissionRate">Commission Rate (%):</label>
+    <input type="number" id="commissionRate" placeholder="Enter rate (e.g. 2.5)">
 
-    <button onclick="calculateCommission()">Calculate Commission</button>
+    <label for="includeGST">Include GST?</label>
+    <select id="includeGST">
+      <option value="true">Yes (10%)</option>
+      <option value="false">No</option>
+    </select>
 
-    <div id="result"></div>
+    <button onclick="handleCalculate()">Calculate</button>
+
+    <div class="result" id="result"></div>
+
+    <div class="footer">Powered by Green Field Real Estate</div>
   </div>
 
-  <footer>
-    © 2025 Green Field Real Estate
-  </footer>
-
   <script>
-    function calculateCommission() {
-      const price = parseFloat(document.getElementById('price').value);
-      const rate = parseFloat(document.getElementById('rate').value);
-      const resultDiv = document.getElementById('result');
+    function calculateCommission(salePrice, commissionRate, includeGST = true) {
+      if (salePrice <= 0 || commissionRate <= 0) {
+        return "Please enter valid sale price and commission rate.";
+      }
 
-      if (!price || !rate) {
-        resultDiv.textContent = "⚠️ Please enter both price and rate.";
-        resultDiv.style.color = "#d9534f";
+      const baseCommission = (salePrice * commissionRate) / 100;
+      const gstRate = 0.10;
+      const gstAmount = includeGST ? baseCommission * gstRate : 0;
+      const totalCommission = baseCommission + gstAmount;
+
+      return {
+        salePrice: salePrice.toFixed(2),
+        commissionRate: commissionRate.toFixed(2),
+        baseCommission: baseCommission.toFixed(2),
+        gstIncluded: includeGST,
+        gstAmount: gstAmount.toFixed(2),
+        totalCommission: totalCommission.toFixed(2)
+      };
+    }
+
+    function handleCalculate() {
+      const salePrice = parseFloat(document.getElementById("salePrice").value);
+      const commissionRate = parseFloat(document.getElementById("commissionRate").value);
+      const includeGST = document.getElementById("includeGST").value === "true";
+      const resultDiv = document.getElementById("result");
+
+      const result = calculateCommission(salePrice, commissionRate, includeGST);
+
+      if (typeof result === "string") {
+        resultDiv.innerHTML = `<p style="color:red;">${result}</p>`;
         return;
       }
 
-      const commission = (price * rate) / 100;
-      resultDiv.textContent = `💰 Commission Amount: ₹${commission.toLocaleString()}`;
-      resultDiv.style.color = "#004aad";
+      resultDiv.innerHTML = `
+        <div><strong>Sale Price:</strong> $${result.salePrice}</div>
+        <div><strong>Commission Rate:</strong> ${result.commissionRate}%</div>
+        <div><strong>Base Commission:</strong> $${result.baseCommission}</div>
+        <div><strong>GST (${result.gstIncluded ? 'Included' : 'Excluded'}):</strong> $${result.gstAmount}</div>
+        <div><strong>Total Commission:</strong> $${result.totalCommission}</div>
+      `;
     }
   </script>
 </body>
